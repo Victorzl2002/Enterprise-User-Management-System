@@ -2,18 +2,21 @@
  * @Author: Victorzl
  * @Date: 2025-01-01 13:41:27
  * @LastEditors: Victorzl
- * @LastEditTime: 2025-01-01 15:08:09
+ * @LastEditTime: 2025-04-05 10:36:01
  * @Description: 请填写简介
 -->
 <template>
   <div id="GlobalHeader">
     <a-row :wrap="false">
-      <a-col flex="200px"
-        ><div class="title-bar">
+      <!--left-logo-title -->
+      <a-col flex="200px">
+        <div class="title-bar">
           <img class="logo" src="../assets/logo.png" alt="logo" />
           <div class="title">用户中心</div>
         </div>
       </a-col>
+
+      <!-- middle-menu -->
       <a-col flex="auto">
         <a-menu
           v-model:selectedKeys="current"
@@ -22,9 +25,14 @@
           @click="MenueClick"
         />
       </a-col>
+
+      <!-- right-button -->
       <a-col flex="100px">
         <div class="user-login-status">
-          <a-button type="primary">登录</a-button>
+          <div v-if="userLoginStore.username">
+            {{ userLoginStore.username }}
+          </div>
+          <div v-else><a-button type="primary">登录</a-button></div>
         </div>
       </a-col>
     </a-row>
@@ -39,14 +47,18 @@ import {
 } from "@ant-design/icons-vue";
 import { MenuProps } from "ant-design-vue";
 import { useRouter } from "vue-router";
+import { useUserLoginStore } from "@/stores/userLoginStore";
 
 const router = useRouter();
+const userLoginStore = useUserLoginStore();
 
+//菜单项跳转
 const MenueClick = ({ key }: { key: string }) => {
   router.push({ path: key });
 };
 
 const current = ref<string[]>(["/"]);
+
 router.afterEach((to) => {
   current.value = [to.path];
 });

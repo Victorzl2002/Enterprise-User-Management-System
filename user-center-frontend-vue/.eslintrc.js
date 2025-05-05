@@ -1,3 +1,10 @@
+/*
+ * @Author: Victorzl
+ * @Date: 2024-12-30 09:25:56
+ * @LastEditors: Victorzl
+ * @LastEditTime: 2025-01-03 15:44:54
+ * @Description: 请填写简介
+ */
 module.exports = {
   root: true,
   env: {
@@ -15,5 +22,6 @@ module.exports = {
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "vue/no-export-in-script-setup": "off",
   },
 };
