@@ -2,7 +2,7 @@
  * @Author: Victorzl
  * @Date: 2025-01-01 13:41:27
  * @LastEditors: Victorzl
- * @LastEditTime: 2025-04-05 10:36:01
+ * @LastEditTime: 2026-04-10 11:17:50
  * @Description: 请填写简介
 -->
 <template>
@@ -29,10 +29,12 @@
       <!-- right-button -->
       <a-col flex="100px">
         <div class="user-login-status">
-          <div v-if="userLoginStore.username">
-            {{ userLoginStore.username }}
+          <div v-if="userLoginStore.userLoginInfo?.userAccount">
+            {{ userLoginStore.userLoginInfo.userAccount }}
           </div>
-          <div v-else><a-button type="primary">登录</a-button></div>
+          <div v-else>
+            <a-button type="primary" @click="handleLogin">登录</a-button>
+          </div>
         </div>
       </a-col>
     </a-row>
@@ -63,6 +65,10 @@ router.afterEach((to) => {
   current.value = [to.path];
 });
 
+const handleLogin = () => {
+  router.push({ path: "/user/login" });
+};
+
 const items = ref<MenuProps["items"]>([
   {
     key: "/",
@@ -81,15 +87,6 @@ const items = ref<MenuProps["items"]>([
     icon: () => h(SettingOutlined),
     label: "用户注册",
     title: "用户注册",
-  },
-  {
-    key: "alipay",
-    label: h(
-      "a",
-      { href: "https://antdv.com", target: "_blank" },
-      "Navigation Four - Link"
-    ),
-    title: "Navigation Four - Link",
   },
 ]);
 </script>

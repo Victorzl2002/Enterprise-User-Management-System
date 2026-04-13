@@ -2,7 +2,7 @@
  * @Author: Victorzl
  * @Date: 2024-12-30 10:08:02
  * @LastEditors: Victorzl
- * @LastEditTime: 2025-04-04 16:20:16
+ * @LastEditTime: 2026-04-09 23:07:31
  * @Description: 请填写简介
 -->
 <template>
@@ -36,7 +36,7 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 #basic-layout .content {
   padding: 20px;
   margin-bottom: 20px;
-  height: calc(100vh - $fotter_height - $header_height);
+  height: calc(100vh - $footer_height - $header_height);
   display: flex;
   justify-content: center;
 }
@@ -47,6 +47,6 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
   bottom: 0;
   left: 0;
   right: 0;
-  height: $fotter_height;
+  height: $footer_height;
 }
 </style>

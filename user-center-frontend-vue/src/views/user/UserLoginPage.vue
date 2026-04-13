@@ -2,7 +2,7 @@
  * @Author: Victorzl
  * @Date: 2025-02-23 15:09:59
  * @LastEditors: Victorzl
- * @LastEditTime: 2025-04-05 10:37:17
+ * @LastEditTime: 2026-04-10 16:49:39
  * @Description: 请填写简介
 -->
 <template>
@@ -21,22 +21,18 @@
     >
       <a-form-item
         label="账号"
-        name="username"
+        name="userAccount"
         :rules="[{ required: true, message: '请输入账号' }]"
       >
-        <a-input v-model:value="formState.username" />
+        <a-input v-model:value="formState.userAccount" />
       </a-form-item>
 
       <a-form-item
         label="密码"
-        name="password"
+        name="userPassword"
         :rules="[{ required: true, message: '请输入密码' }]"
       >
-        <a-input-password v-model:value="formState.password" />
-      </a-form-item>
-
-      <a-form-item name="remember">
-        <a-checkbox v-model:checked="formState.remember">记住我</a-checkbox>
+        <a-input-password v-model:value="formState.userPassword" />
       </a-form-item>
 
       <a-form-item>
@@ -51,31 +47,39 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import { useUserLoginStore } from "@/stores/userLoginStore";
 import { useRouter } from "vue-router";
+import { message } from "ant-design-vue";
 
 interface FormState {
-  username: string;
-  password: string;
-  remember: boolean;
+  userAccount: string;
+  userPassword: string;
 }
 
 const userLoginStore = useUserLoginStore();
 const router = useRouter();
 
 const formState = reactive<FormState>({
-  username: "",
-  password: "",
-  remember: true,
+  userAccount: "",
+  userPassword: "",
 });
 
 const handleSubmit = (values: unknown) => {
-  userLoginStore.fetchLogin();
-  router.push("/");
+  userLoginStore
+    .fetchLogin({
+      userAccount: formState.userAccount,
+      userPassword: formState.userPassword,
+    })
+    .then(() => {
+      router.push({ path: "/" });
+    })
+    .catch((error) => {
+      message.error(error.message);
+    });
 };
 
-const onFinishFailed = (errorInfo: any) => {
+const onFinishFailed = (errorInfo: unknown) => {
   console.log("Failed:", errorInfo);
 };
 </script>

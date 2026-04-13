@@ -2,14 +2,23 @@
  * @Author: Victorzl
  * @Date: 2025-02-23 15:24:58
  * @LastEditors: Victorzl
- * @LastEditTime: 2025-04-01 13:41:26
+ * @LastEditTime: 2026-04-10 10:43:36
  * @Description: 请填写简介
  */
 module.exports = {
+  devServer: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        pathRewrite: { "^/api": "" },
+      },
+    },
+  },
   css: {
     loaderOptions: {
       sass: {
-        additionalData: `@import "@/style/variables.scss";`,
+        additionalData: `@use "@/style/variables.scss" as *;`,
       },
     },
   },
