@@ -20,5 +20,4 @@ public interface UserConstant {
      * 管理员
      */
     int ADMIN_ROLE = 1;
-
 }

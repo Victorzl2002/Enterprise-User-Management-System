@@ -2,7 +2,7 @@
  * @Author: Victorzl
  * @Date: 2026-04-10 10:10:44
  * @LastEditors: Victorzl
- * @LastEditTime: 2026-04-10 11:35:12
+ * @LastEditTime: 2026-04-17 16:38:26
  * @Description: 请填写简介
  */
 export type UserLoginRequest = {
@@ -17,8 +17,8 @@ export type UserRegisterRequest = {
 };
 
 export type UserLoginResponse = {
-  id: number;
-  userAccount: string;
+  id: string;
+  userAccount?: string;
   username: string;
   userPassword: string | null;
   avatar: string | null;

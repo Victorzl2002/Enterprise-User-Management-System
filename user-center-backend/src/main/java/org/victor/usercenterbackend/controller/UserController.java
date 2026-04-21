@@ -9,6 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.victor.usercenterbackend.Exception.GlobalResponseException;
+import org.victor.usercenterbackend.common.BaseResponse;
+import org.victor.usercenterbackend.common.ErrorResponse;
+import org.victor.usercenterbackend.common.ResponseUtils;
 import org.victor.usercenterbackend.constants.UserConstant;
 import org.victor.usercenterbackend.model.domain.User;
 import org.victor.usercenterbackend.model.domain.request.UserLoginRequest;
@@ -31,8 +35,9 @@ public class UserController {
 
 
     @GetMapping("/current")
-    public User currentUserGet(HttpServletRequest request){
-        return userService.getCurrentUser(request);
+    public BaseResponse<User> currentUserGet(HttpServletRequest request){
+        User currentUser = userService.getCurrentUser(request);
+        return ResponseUtils.success(currentUser);
     }
 
     @PostMapping("/register")
@@ -51,41 +56,48 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public User userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request ) {
+    public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request ) {
         if (userLoginRequest == null) {
-            return null;
+             throw new GlobalResponseException(ErrorResponse.NO_AUTH.getCode(),ErrorResponse.NO_AUTH.getMessage());
         }
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return null;
+            throw  new GlobalResponseException(ErrorResponse.NULL_ERROR.getCode(),ErrorResponse.NULL_ERROR.getMessage());
         }
-        return userService.login(userAccount, userPassword, request);
+        User loginUser = userService.login(userAccount, userPassword, request);
+        if (loginUser == null) {
+            throw new GlobalResponseException(ErrorResponse.NO_AUTH.getCode(),ErrorResponse.NO_AUTH.getMessage());
+        }
+        return ResponseUtils.success(loginUser);
     }
 
     @PostMapping("/logout")
-    public Boolean logout(HttpServletRequest request) {
+    public BaseResponse<Boolean> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.removeAttribute(UserConstant.USER_LOGIN_STATE);
         }
-        return true;
+        return ResponseUtils.success(true);
     }
 
-    @PostMapping("/search")
-    public List<User> userSearchByUsername(@RequestBody String username, HttpServletRequest request) {
-        if (StringUtils.isBlank(username)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username is blank");
-        }
+    @GetMapping("/search")
+    public BaseResponse<List<User>> userSearchByUsername(@RequestParam String username, HttpServletRequest request) {
         if (!isAdmin(request)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "login expired or unauthorized");
+            throw new GlobalResponseException(ErrorResponse.NO_AUTH.getCode(),ErrorResponse.NO_AUTH.getMessage());
         }
-        return userService.list(new QueryWrapper<User>().like("username", username)).stream().map(userService::getSafeUser).toList();
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(username)) {
+            userQueryWrapper.like("username", username);
+        }
+        List<User> users = userService.list(userQueryWrapper).stream().map(userService::getSafeUser).toList();
+        return ResponseUtils.success(users);
     }
+
 
     @DeleteMapping("/")
-    public boolean delectById(@RequestBody Long id, HttpServletRequest request) {
-        if (id == null || id <= 0) {
+    public boolean delectById(@RequestParam Long id, HttpServletRequest request) {
+          if (id == null || id <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id is invalid");
         }
         if (!isAdmin(request)) {

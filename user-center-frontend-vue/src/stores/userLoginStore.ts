@@ -2,7 +2,7 @@
  * @Author: Victorzl
  * @Date: 2025-04-04 21:14:06
  * @LastEditors: Victorzl
- * @LastEditTime: 2026-04-10 17:09:02
+ * @LastEditTime: 2026-04-19 21:26:03
  * @Description: 请填写简介
  */
 import {
@@ -12,9 +12,11 @@ import {
 } from "@/api/user/types";
 import {
   userCurrent,
+  userDelete,
   userLogin,
   userLogout,
   userRegister,
+  usersSearch,
 } from "@/api/user/user";
 import { message } from "ant-design-vue";
 import { defineStore } from "pinia";
@@ -44,6 +46,20 @@ export const useUserLoginStore = defineStore("userLogin", {
       return userCurrent().then((res) => {
         this.userLoginInfo = res;
         return res;
+      });
+    },
+    fetchUsers(username: string) {
+      return usersSearch(username).then((res) => {
+        return res;
+      });
+    },
+
+    deleteUser(userId: string) {
+      return userDelete(userId).then((ok) => {
+        if (!ok) {
+          throw new Error(`删除失败，id=${userId}`);
+        }
+        message.success("用户删除成功");
       });
     },
     async logout() {
